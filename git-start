@@ -1,21 +1,17 @@
-#!/bin/bash
-# git-start: Create and switch to a new branch easily
+#!/usr/bin/env bash
+# git-start: Create and switch to a new branch easily.
 
 if [ -z "$1" ]; then
-  echo "❌ Please provide a branch name"
-  echo "👉 Usage: git start <branch-name>"
+  echo "Usage: git start <branch-name>"
   exit 1
 fi
 
-BRANCH=$1
+branch=$1
 
-# Fetch latest changes from remote main
-git fetch origin main >/dev/null 2>&1
-
-# Checkout main and pull latest
-git checkout main >/dev/null 2>&1 && git pull origin main >/dev/null 2>&1
-
-# Create and switch to new branch
-git checkout -b "$BRANCH"
-
-echo "✅ Switched to new branch: $BRANCH"
+if git rev-parse --verify "$branch" >/dev/null 2>&1; then
+  echo "Branch '$branch' already exists. Switching..."
+  git checkout "$branch"
+else
+  echo "Creating and switching to branch '$branch'..."
+  git checkout -b "$branch"
+fi

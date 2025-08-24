@@ -1,20 +1,10 @@
-#!/bin/bash
-# git-resume: Restore your last saved WIP commit
+#!/usr/bin/env bash
+# git-resume: Resume work after a git-save.
 
-# Check if there are commits in history
-if [ -z "$(git log -1 --pretty=format:'%h')" ]; then
-  echo "❌ No commits found to resume."
-  exit 1
-fi
-
-# Get the last commit message
-LAST_MSG=$(git log -1 --pretty=%B)
-
-# If the last commit was a WIP commit
-if [[ "$LAST_MSG" == WIP:* ]]; then
-  echo "🔄 Resuming from last WIP commit..."
+if git log -1 --pretty=%B | grep -q "WIP: saving progress"; then
+  echo "Resuming from last WIP commit..."
   git reset --soft HEAD~1
-  echo "✅ Changes restored into working directory."
+  echo "✅ Changes restored to working directory."
 else
-  echo "⚠️ Last commit is not marked as WIP. Nothing to resume."
+  echo "⚠️ No WIP commit found to resume."
 fi

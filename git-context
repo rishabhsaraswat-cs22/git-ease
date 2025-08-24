@@ -1,21 +1,13 @@
-#!/bin/bash
-# git-context: Quickly switch to an existing branch
+#!/usr/bin/env bash
+# git-context: Show current Git branch and status.
 
-# Get list of local branches sorted by last commit date
-BRANCHES=$(git branch --sort=-committerdate | sed 's/*//')
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
-if [ -z "$BRANCHES" ]; then
-  echo "❌ No branches found"
+if [ $? -ne 0 ]; then
+  echo "Not a git repository."
   exit 1
 fi
 
-echo "📂 Available branches:"
-select BRANCH in $BRANCHES; do
-  if [ -n "$BRANCH" ]; then
-    git checkout "$BRANCH"
-    echo "✅ Switched to branch: $BRANCH"
-    break
-  else
-    echo "❌ Invalid choice, try again."
-  fi
-done
+echo "📌 Current branch: $branch"
+echo
+git status -s

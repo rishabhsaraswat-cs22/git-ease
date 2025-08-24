@@ -1,17 +1,8 @@
-#!/bin/bash
-# git-save: Save your changes quickly (WIP commit)
+#!/usr/bin/env bash
+# git-save: Save uncommitted changes safely.
 
-if git diff --quiet && git diff --cached --quiet; then
-  echo "✅ Nothing to save, working directory clean."
-  exit 0
-fi
+msg=${1:-"WIP: saving progress"}
 
-MESSAGE=${1:-"WIP: quick save"}
-
-# Stage all changes
 git add -A
-
-# Commit with message
-git commit -m "$MESSAGE"
-
-echo "💾 Changes saved with commit message: '$MESSAGE'"
+git commit -m "$msg" --no-verify
+echo "✅ Changes saved with message: $msg"
