@@ -1,0 +1,17 @@
+#!/bin/bash
+# git-save: Save your changes quickly (WIP commit)
+
+if git diff --quiet && git diff --cached --quiet; then
+  echo "✅ Nothing to save, working directory clean."
+  exit 0
+fi
+
+MESSAGE=${1:-"WIP: quick save"}
+
+# Stage all changes
+git add -A
+
+# Commit with message
+git commit -m "$MESSAGE"
+
+echo "💾 Changes saved with commit message: '$MESSAGE'"

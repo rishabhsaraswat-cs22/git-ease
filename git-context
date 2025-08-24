@@ -1,0 +1,21 @@
+#!/bin/bash
+# git-context: Quickly switch to an existing branch
+
+# Get list of local branches sorted by last commit date
+BRANCHES=$(git branch --sort=-committerdate | sed 's/*//')
+
+if [ -z "$BRANCHES" ]; then
+  echo "❌ No branches found"
+  exit 1
+fi
+
+echo "📂 Available branches:"
+select BRANCH in $BRANCHES; do
+  if [ -n "$BRANCH" ]; then
+    git checkout "$BRANCH"
+    echo "✅ Switched to branch: $BRANCH"
+    break
+  else
+    echo "❌ Invalid choice, try again."
+  fi
+done
