@@ -1,13 +1,33 @@
-#!/usr/bin/env bash
-# git-context: Show current Git branch and status.
+#!/bin/bash
+# git-context: Interactive branch switcher (by number or name)
 
-branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+branches=$(git branch --format="%(refname:short)")
+mapfile -t branch_array <<< "$branches"
 
-if [ $? -ne 0 ]; then
-  echo "Not a git repository."
-  exit 1
+echo "📂 Available branches:"
+i=1
+for b in "${branch_array[@]}"; do
+    echo "$i) $b"
+    ((i++))
+done
+
+read -p "#? " choice
+
+# If input is a number, map to branch
+if [[ "$choice" =~ ^[0-9]+$ ]]; then
+    index=$((choice-1))
+    if [[ $index -ge 0 && $index -lt ${#branch_array[@]} ]]; then
+        git checkout "${branch_array[$index]}"
+    else
+        echo "❌ Invalid number, try again."
+        exit 1
+    fi
+else
+    # Otherwise, treat as branch name
+    if git show-ref --verify --quiet "refs/heads/$choice"; then
+        git checkout "$choice"
+    else
+        echo "❌ Branch '$choice' not found."
+        exit 1
+    fi
 fi
-
-echo "📌 Current branch: $branch"
-echo
-git status -s
